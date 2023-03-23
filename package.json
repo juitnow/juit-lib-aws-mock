@@ -19,6 +19,20 @@
   },
   "author": "Juit Developers <developers@juit.com>",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juitnow/juit-lib-aws-mock.git"
+  },
+  "keywords": [
+    "aws",
+    "aws-sdk",
+    "mock",
+    "testing"
+  ],
+  "bugs": {
+    "url": "https://github.com/juitnow/juit-lib-aws-mock/issues"
+  },
+  "homepage": "https://github.com/juitnow/juit-lib-aws-mock#readme",
   "files": [
     "*.md",
     "dist/",
