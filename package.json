@@ -1,6 +1,7 @@
 {
   "name": "@juit/lib-aws-mock",
   "version": "1.0.0",
+  "type": "module",
   "description": "Easy Mocking for AWS SDK v3",
   "main": "index.js",
   "scripts": {
