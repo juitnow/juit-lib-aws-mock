@@ -1,0 +1,45 @@
+{
+  "name": "@juit/lib-aws-mock",
+  "version": "1.0.0",
+  "description": "Easy Mocking for AWS SDK v3",
+  "main": "index.js",
+  "scripts": {
+    "build": "plug",
+    "coverage": "plug coverage",
+    "dev": "plug coverage -w src -w test",
+    "lint": "plug lint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "transpile": "plug transpile"
+  },
+  "dependencies": {
+    "@aws-sdk/types": "^3.296.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-sts": "^3.297.0",
+    "@plugjs/build": "^0.3.0"
+  },
+  "author": "Juit Developers <developers@juit.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juitnow/juit-lib-aws-mock.git"
+  },
+  "keywords": [
+    "aws",
+    "aws-sdk",
+    "mock",
+    "testing"
+  ],
+  "bugs": {
+    "url": "https://github.com/juitnow/juit-lib-aws-mock/issues"
+  },
+  "homepage": "https://github.com/juitnow/juit-lib-aws-mock#readme",
+  "files": [
+    "*.md",
+    "dist/",
+    "src/"
+  ],
+  "directories": {
+    "test": "test"
+  }
+}
