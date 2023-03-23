@@ -13,7 +13,7 @@ describe('AWS Mock', () => {
 
   it('should mock a simple service call and destroy', async () => {
     mock = new AWSMock(STSClient)
-    mock.on(GetCallerIdentityCommand, () => ({ Account: 'the account 1' }))
+        .on(GetCallerIdentityCommand, () => ({ Account: 'the account 1' }))
 
     const stsClient = new STSClient({ region: 'no-region-1' })
     expect(await stsClient.send(new GetCallerIdentityCommand({}))).toEqual({
@@ -29,7 +29,7 @@ describe('AWS Mock', () => {
 
   it('should only mock the specified client', async () => {
     mock = new AWSMock(STS) // not `STSClient` (its super class)
-    mock.on(GetCallerIdentityCommand, () => ({ Account: 'the account 2' }))
+        .on(GetCallerIdentityCommand, () => ({ Account: 'the account 2' }))
 
     const sts = new STS({ region: 'no-region-1' })
     expect(await sts.getCallerIdentity({})).toEqual({
@@ -44,7 +44,7 @@ describe('AWS Mock', () => {
 
   it('should fail when a command is not mocked', async () => {
     mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => ({ Account: 'the account 3' }))
+        .on(GetCallerIdentityCommand, () => ({ Account: 'the account 3' }))
 
     const sts = new STS({ region: 'no-region-1' })
     await expectAsync(sts.assumeRole({
@@ -55,7 +55,7 @@ describe('AWS Mock', () => {
 
   it('should fail when a mocked command returns no result', async () => {
     mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => null as any)
+        .on(GetCallerIdentityCommand, () => null as any)
 
     const sts = new STS({ region: 'no-region-1' })
     await expectAsync(sts.getCallerIdentity({}))
@@ -63,8 +63,7 @@ describe('AWS Mock', () => {
   })
 
   it('should fail when a mocked command throws an error', async () => {
-    mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => {
+    mock = new AWSMock(STS).on(GetCallerIdentityCommand, () => {
       throw new TypeError('Hello, world!')
     })
 
@@ -75,7 +74,7 @@ describe('AWS Mock', () => {
 
   it('should work with callbacks', (done) => {
     mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => ({ Account: 'the account 4' }))
+        .on(GetCallerIdentityCommand, () => ({ Account: 'the account 4' }))
 
     const sts = new STS({ region: 'no-region-1' })
 
@@ -93,8 +92,7 @@ describe('AWS Mock', () => {
   })
 
   it('should work with failing callbacks', (done) => {
-    mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => {
+    mock = new AWSMock(STS).on(GetCallerIdentityCommand, () => {
       throw new TypeError('Hello, world!')
     })
 
@@ -113,7 +111,7 @@ describe('AWS Mock', () => {
 
   it('should pass the current state to handlers', async () => {
     mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, (input, state) => ({ input, state } as any))
+        .on(GetCallerIdentityCommand, (input, state) => ({ input, state } as any))
 
     const sts = new STS({ region: 'no-region-1' })
 
@@ -142,8 +140,7 @@ describe('AWS Mock', () => {
 
   it('should keep track of all invoked calls', async () => {
     let number = 0
-    mock = new AWSMock(STS)
-    mock.on(GetCallerIdentityCommand, () => {
+    mock = new AWSMock(STS).on(GetCallerIdentityCommand, () => {
       number ++ // increase our counter
       if (number % 2) return { Account: `number ${number}` }
       throw new Error(`Number ${number} is even`)
