@@ -23,5 +23,8 @@
     "*.md",
     "dist/",
     "src/"
-  ]
+  ],
+  "directories": {
+    "test": "test"
+  }
 }
