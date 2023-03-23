@@ -1,9 +1,23 @@
 {
   "name": "@juit/lib-aws-mock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Easy Mocking for AWS SDK v3",
-  "main": "index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
   "scripts": {
     "build": "plug",
     "coverage": "plug coverage",
