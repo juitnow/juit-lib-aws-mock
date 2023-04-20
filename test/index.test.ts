@@ -17,13 +17,13 @@ describe('AWS Mock', () => {
 
     const stsClient = new STSClient({ region: 'no-region-1' })
     expect(await stsClient.send(new GetCallerIdentityCommand({}))).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       Account: 'the account 1',
     })
 
     mock.destroy()
 
-    await expectAsync(stsClient.send(new GetCallerIdentityCommand({})))
+    await expect(stsClient.send(new GetCallerIdentityCommand({})))
         .toBeRejected()
   })
 
@@ -33,12 +33,12 @@ describe('AWS Mock', () => {
 
     const sts = new STS({ region: 'no-region-1' })
     expect(await sts.getCallerIdentity({})).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       Account: 'the account 2',
     })
 
     const stsClient = new STSClient({ region: 'no-region-1' })
-    await expectAsync(stsClient.send(new GetCallerIdentityCommand({})))
+    await expect(stsClient.send(new GetCallerIdentityCommand({})))
         .toBeRejected()
   })
 
@@ -47,7 +47,7 @@ describe('AWS Mock', () => {
         .on(GetCallerIdentityCommand, () => ({ Account: 'the account 3' }))
 
     const sts = new STS({ region: 'no-region-1' })
-    await expectAsync(sts.assumeRole({
+    await expect(sts.assumeRole({
       RoleArn: 'role arn',
       RoleSessionName: 'role session',
     })).toBeRejectedWithError(Error, 'No mock for "STS.AssumeRoleCommand"')
@@ -58,7 +58,7 @@ describe('AWS Mock', () => {
         .on(GetCallerIdentityCommand, () => null as any)
 
     const sts = new STS({ region: 'no-region-1' })
-    await expectAsync(sts.getCallerIdentity({}))
+    await expect(sts.getCallerIdentity({}))
         .toBeRejectedWithError(Error, 'Mock for "STS.GetCallerIdentityCommand" returned no result')
   })
 
@@ -68,44 +68,50 @@ describe('AWS Mock', () => {
     })
 
     const sts = new STS({ region: 'no-region-1' })
-    await expectAsync(sts.getCallerIdentity({}))
+    await expect(sts.getCallerIdentity({}))
         .toBeRejectedWithError(TypeError, 'Hello, world!')
   })
 
-  it('should work with callbacks', (done) => {
+  it('should work with callbacks', () => {
     mock = new AWSMock(STS)
         .on(GetCallerIdentityCommand, () => ({ Account: 'the account 4' }))
 
     const sts = new STS({ region: 'no-region-1' })
 
-    sts.getCallerIdentity({}, (error, result) => {
-      try {
-        expect(error).toBeNull()
-        expect(result).toEqual({
-          $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
-          Account: 'the account 4',
-        })
-      } finally {
-        done()
-      }
+    return new Promise<void>((resolve, reject) => {
+      sts.getCallerIdentity({}, (error, result) => {
+        try {
+          expect(error).toBeNull()
+          expect(result).toEqual({
+            $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
+            Account: 'the account 4',
+          })
+          resolve()
+        } catch (error) {
+          reject(error)
+        }
+      })
     })
   })
 
-  it('should work with failing callbacks', (done) => {
+  it('should work with failing callbacks', () => {
     mock = new AWSMock(STS).on(GetCallerIdentityCommand, () => {
       throw new TypeError('Hello, world!')
     })
 
     const sts = new STS({ region: 'no-region-1' })
 
-    sts.getCallerIdentity({}, (error, result) => {
-      try {
-        expect(result).toBeUndefined()
-        expect(error).toBeInstanceOf(TypeError)
-        expect(error.message).toBe('Hello, world!')
-      } finally {
-        done()
-      }
+    return new Promise<void>((resolve, reject) => {
+      sts.getCallerIdentity({}, (error, result) => {
+        try {
+          expect(result).toBeUndefined()
+          expect(error).toBeInstanceOf(TypeError)
+          expect(error.message).toStrictlyEqual('Hello, world!')
+          resolve()
+        } catch (error) {
+          reject(error)
+        }
+      })
     })
   })
 
@@ -116,7 +122,7 @@ describe('AWS Mock', () => {
     const sts = new STS({ region: 'no-region-1' })
 
     expect(await sts.getCallerIdentity({ number: 1 })).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       input: { number: 1 },
       state: undefined,
     } as any)
@@ -124,7 +130,7 @@ describe('AWS Mock', () => {
     mock.setState('hello, world!')
 
     expect(await sts.getCallerIdentity({ number: 2 })).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       input: { number: 2 },
       state: 'hello, world!',
     } as any)
@@ -132,7 +138,7 @@ describe('AWS Mock', () => {
     mock.reset() // resets state, too!
 
     expect(await sts.getCallerIdentity({ number: 1 })).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       input: { number: 1 },
       state: undefined,
     } as any)
@@ -151,7 +157,7 @@ describe('AWS Mock', () => {
     expect(mock.getCalls()).toEqual([])
 
     expect(await sts.getCallerIdentity({ inputNumber: 0 })).toEqual({
-      $metadata: { httpStatusCode: 200, requestId: jasmine.any(String) },
+      $metadata: { httpStatusCode: 200, requestId: expect.toBeA('string') },
       Account: 'number 1',
     })
 
@@ -161,7 +167,7 @@ describe('AWS Mock', () => {
       success: true,
     } ])
 
-    await expectAsync(sts.getCallerIdentity({ inputNumber: 1 }))
+    await expect(sts.getCallerIdentity({ inputNumber: 1 }))
         .toBeRejectedWithError(Error, 'Number 2 is even')
 
     expect(mock.getCalls()).toEqual([ {

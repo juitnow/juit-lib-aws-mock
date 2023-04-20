@@ -17,7 +17,8 @@
     "verbatimModuleSyntax": true,
   },
   "include": [
-    "./src",
     "./build.ts",
+    "./src",
+    "./types",
   ],
 }
