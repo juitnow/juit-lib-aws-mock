@@ -72,15 +72,23 @@ export class AWSMock<State = any> {
           const error = new Error(`No mock for "${clientName}.${commandName}"`)
           return reject(error)
         }
+
+        // Call the mocked handler
         try {
           // Clone input for every call
           const input = JSON.parse(JSON.stringify(_command.input))
 
           // Call the handler and get the result
-          const result: MetadataBearer = await handler(input, this._state)
+          const output: MetadataBearer = await handler(input, this._state)
 
           // If no result (null loose check) then simply return a 404
-          if (! result) throw new Error(`Mock for "${clientName}.${commandName}" returned no result`)
+          if (! output) {
+            const error = new Error(`Mock for "${clientName}.${commandName}" returned no result`)
+            return reject(error)
+          }
+
+          // Clone the output as we did for the input
+          const result = JSON.parse(JSON.stringify(output))
 
           // If we don't have some metadata, inject some fake stuff
           if (! result.$metadata) result.$metadata = { httpStatusCode: 200 }
