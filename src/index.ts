@@ -64,6 +64,9 @@ export class AWSMock<State = any> {
       const cb: ((err: any, data?: any) => void) | undefined =
         typeof lastArgument === 'function' ? lastArgument : undefined
 
+      // Clone input for every call
+      const input = JSON.parse(JSON.stringify(_command.input))
+
       // Always work with promises, decoupling from event loop
       const promise = new Promise((resolve, reject) => setImmediate(async () => {
         // Get the handler for the method and verify it
@@ -75,9 +78,6 @@ export class AWSMock<State = any> {
 
         // Call the mocked handler
         try {
-          // Clone input for every call
-          const input = JSON.parse(JSON.stringify(_command.input))
-
           // Call the handler and get the result
           const output: MetadataBearer = await handler(input, this._state)
 
@@ -101,11 +101,11 @@ export class AWSMock<State = any> {
         }
       })).then((result) => {
         // On success, record the call and return the result
-        this._calls.push({ command: commandName, input: _command.input, success: true })
+        this._calls.push({ command: commandName, input: input, success: true })
         return result
       }, (error) => {
         // On failure, record the call and throw the error
-        this._calls.push({ command: commandName, input: _command.input, success: false })
+        this._calls.push({ command: commandName, input: input, success: false })
         throw error
       })
 
