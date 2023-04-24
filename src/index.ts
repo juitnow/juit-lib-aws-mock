@@ -73,8 +73,11 @@ export class AWSMock<State = any> {
         // Decouple from event loop
         return new Promise((resolve, reject) => setImmediate(async () => {
           try {
+            // Clone input for every call
+            const input = JSON.parse(JSON.stringify(_command.input))
+
             // Call the handler and get the result
-            const result: MetadataBearer = await handler(_command.input, this._state)
+            const result: MetadataBearer = await handler(input, this._state)
 
             // If no result (null loose check) then simply return a 404
             if (! result) throw new Error(`Mock for "${clientName}.${commandName}" returned no result`)
