@@ -70,18 +70,25 @@ export class AWSMock<State = any> {
         const handler = this._handlers.get(commandConstuctor)
         if (! handler) throw new Error(`No mock for "${clientName}.${commandName}"`)
 
-        // Call the handler and get the result
-        const result: MetadataBearer = await handler(_command.input, this._state)
+        // Decouple from event loop
+        return new Promise((resolve, reject) => setImmediate(async () => {
+          try {
+            // Call the handler and get the result
+            const result: MetadataBearer = await handler(_command.input, this._state)
 
-        // If no result (null loose check) then simply return a 404
-        if (! result) throw new Error(`Mock for "${clientName}.${commandName}" returned no result`)
+            // If no result (null loose check) then simply return a 404
+            if (! result) throw new Error(`Mock for "${clientName}.${commandName}" returned no result`)
 
-        // If we don't have some metadata, inject some fake stuff
-        if (! result.$metadata) result.$metadata = { httpStatusCode: 200 }
-        if (! result.$metadata.requestId) result.$metadata.requestId = randomUUID()
+            // If we don't have some metadata, inject some fake stuff
+            if (! result.$metadata) result.$metadata = { httpStatusCode: 200 }
+            if (! result.$metadata.requestId) result.$metadata.requestId = randomUUID()
 
-        // All done!
-        return result
+            // All done!
+            resolve(result)
+          } catch (error) {
+            reject(error)
+          }
+        }))
       }).then((result) => {
         // On success, record the call and return the result
         this._calls.push({ command: commandName, input: _command.input, success: true })
