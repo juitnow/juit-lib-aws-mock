@@ -65,7 +65,7 @@ export class AWSMock<State = any> {
         typeof lastArgument === 'function' ? lastArgument : undefined
 
       // Clone input for every call
-      const input = JSON.parse(JSON.stringify(_command.input))
+      const input = structuredClone(_command.input)
 
       // Always work with promises, decoupling from event loop
       const promise = new Promise((resolve, reject) => setImmediate(async () => {
@@ -88,7 +88,7 @@ export class AWSMock<State = any> {
           }
 
           // Clone the output as we did for the input
-          const result = JSON.parse(JSON.stringify(output))
+          const result = structuredClone(output)
 
           // If we don't have some metadata, inject some fake stuff
           if (! result.$metadata) result.$metadata = { httpStatusCode: 200 }
