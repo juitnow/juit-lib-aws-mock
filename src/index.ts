@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import type { Client, Command, MetadataBearer } from '@aws-sdk/types'
+import type { Client, Command, MetadataBearer } from '@smithy/types'
 
 /** A type identifying _any_ AWS {@link Client} */
 type AnyClient = Client<any, any, any>
