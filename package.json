@@ -1,6 +1,6 @@
 {
   "name": "@juit/lib-aws-mock",
-  "version": "1.2.17",
+  "version": "1.2.18",
   "description": "Easy Mocking for AWS SDK v3",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -26,10 +26,10 @@
     "transpile": "plug transpile"
   },
   "dependencies": {
-    "@smithy/types": "^2.7.0"
+    "@smithy/types": "^2.8.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-sts": "^3.481.0",
+    "@aws-sdk/client-sts": "^3.485.0",
     "@plugjs/build": "^0.5.19"
   },
   "author": "Juit Developers <developers@juit.com>",
